@@ -235,12 +235,12 @@ int main()
 				system("cls");
 				std::cout << A << " x \n";
 				BoolMatriz I(filas, filas);
-				I = 1;
+				I = ++I;
 				std::cout << I << " = \n";
 				BoolMatriz C;
-				C = I * A;
-				std::cout << I << '\n';
-				guardado(database, A, C, I);
+				C = I ^ A;
+				std::cout << C << '\n';
+				guardado(database, A, I, C);
 			}
 			else
 			{

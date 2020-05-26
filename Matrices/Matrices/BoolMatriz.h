@@ -22,8 +22,8 @@ public:
 	BoolMatriz operator*(BoolMatriz &matriz2);
 	BoolMatriz operator~();
 	BoolMatriz operator!();
-	void operator++();
-	void operator--();
+	BoolMatriz operator++();
+	BoolMatriz operator--();
 	void operator=(int num);
 	bool operator()(int x, int y);
 	void operator()(int x, int y, bool info);

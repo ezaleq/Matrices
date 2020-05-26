@@ -64,22 +64,28 @@ BoolMatriz BoolMatriz::operator*(BoolMatriz &matriz2)
 	return ans;
 }
 
-void BoolMatriz::operator++()
+BoolMatriz BoolMatriz::operator++()
 {
+	BoolMatriz nuevo;
 	if (data.filas == data.columnas)
 	{
+		nuevo.resize(data.filas, data.columnas);
 		for (int a = 0; a < data.filas; a++)
-			data.matriz[a][a] = 1;
+			nuevo(a,a,1);
 	}
+	return nuevo;
 }
 
-void BoolMatriz::operator--()
+BoolMatriz BoolMatriz::operator--()
 {
+	BoolMatriz nuevo;
 	if (data.filas == data.columnas)
 	{
+		nuevo.resize(data.filas, data.columnas);
 		for (int a = 0; a < data.filas; a++)
-			data.matriz[a][a] = 0;
+			nuevo(a,a,0);
 	}
+	return nuevo;
 }
 
 BoolMatriz BoolMatriz::operator~()
