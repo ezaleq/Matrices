@@ -1,72 +1,53 @@
 #include "BoolMatriz.h"
-#include "input.h"
+
 
 BoolMatriz::BoolMatriz(int filas, int columnas)
 {
 	data.filas = filas;
 	data.columnas = columnas;
-	alocarMatriz();
+	data.matriz.assign(filas, std::vector<bool>(columnas, 0));
 }
 
-BoolMatriz::~BoolMatriz()
+BoolMatriz BoolMatriz::operator+(BoolMatriz &matriz2)
 {
-	dealocarMatriz();
-}
-
-void BoolMatriz::alocarMatriz()
-{
-	data.matriz = new bool* [data.filas];
-	for (int i = 0; i < data.filas; i++)
-	{
-		data.matriz[i] = new bool[data.columnas];
-		for (int j = 0; j < getColumnas(); j++)
-		{
-			data.matriz[i][j] = false;
-		}
-	}
-}
-
-void BoolMatriz::dealocarMatriz()
-{
-	for (int i = 0; i < data.filas; i++)
-		delete[] data.matriz[i];
-	delete[] data.matriz;
-	data.matriz = nullptr;
-}
-
-void BoolMatriz::operator+=(BoolMatriz &matriz2)
-{
+	BoolMatriz ans;
 	if (data.filas == matriz2.getFilas() && data.columnas == matriz2.getColumnas())
 	{
+		ans.resize(data.filas, data.columnas);
 		for (int a = 0; a < data.filas; a++)
 		{
 			for (int b = 0; b < data.columnas; b++)
 			{
-				data.matriz[a][b] += matriz2(a, b);
+				ans(a, b, data.matriz[a][b] + matriz2(a, b));
 			}
 		}
 	}
+	return ans;
 }
 
-void BoolMatriz::operator^=(BoolMatriz &matriz2)
+BoolMatriz BoolMatriz::operator^(BoolMatriz &matriz2)
 {
+	BoolMatriz ans;
 	if (data.filas == matriz2.getFilas() && data.columnas == matriz2.getColumnas())
 	{
+		ans.resize(data.filas, data.columnas);
 		for (int a = 0; a < data.filas; a++)
 		{
 			for (int b = 0; b < data.columnas; b++)
 			{
-				data.matriz[a][b] *= matriz2(a, b);
+				ans(a,b, data.matriz[a][b] * matriz2(a, b));
 			}
 		}
 	}
+	return ans;
 }
 
-void BoolMatriz::operator*=(BoolMatriz &matriz2)
+BoolMatriz BoolMatriz::operator*(BoolMatriz &matriz2)
 {
+	BoolMatriz ans;
 	if (data.columnas == matriz2.getFilas())
 	{
-		BoolMatriz producto(data.filas, matriz2.getColumnas());
+		ans.resize(data.filas, matriz2.getColumnas());
 		int n = data.filas;
 		int m = matriz2.getColumnas();
 		for (int k = 0; k < m; k++)
@@ -75,23 +56,12 @@ void BoolMatriz::operator*=(BoolMatriz &matriz2)
 			{
 				for (int j = 0; j < m; j++)
 				{
-					producto(i, j) += data.matriz[i][k] * matriz2(k,j);
+					ans(i, j, ans(i,j) + (data.matriz[i][k] * matriz2(k, j)));
 				}
 			}
 		}
-		*this = producto;
 	}
-}
-
-void BoolMatriz::operator=(BoolMatriz &matriz2)
-{
-	dealocarMatriz();
-	data.filas = matriz2.getFilas();
-	data.columnas = matriz2.getColumnas();
-	alocarMatriz();
-	for (int a = 0; a < getFilas(); a++)
-		for (int b = 0; b < getColumnas(); b++)
-			data.matriz[a][b] = matriz2(a, b);
+	return ans;
 }
 
 void BoolMatriz::operator++()
@@ -110,6 +80,24 @@ void BoolMatriz::operator--()
 		for (int a = 0; a < data.filas; a++)
 			data.matriz[a][a] = 0;
 	}
+}
+
+BoolMatriz BoolMatriz::operator~()
+{
+	BoolMatriz nuevo (data.columnas, data.filas);
+	for (int a = 0; a < data.filas; a++)
+		for (int b = 0; b < data.columnas; b++)
+			nuevo(b,a, data.matriz[a][b]);
+	return nuevo;
+}
+
+BoolMatriz BoolMatriz::operator!() 
+{
+	BoolMatriz ans(data.filas, data.columnas);
+	for (int a = 0; a < data.filas; a++)
+		for (int b = 0; b < data.columnas; b++)
+			ans(a,b, !data.matriz[a][b]);
+	return ans;
 }
 
 void BoolMatriz::operator=(int num)
@@ -170,31 +158,20 @@ bool BoolMatriz::operator==(int num)
 	if (num == 1)
 		for (int a = 0; a < data.filas; a++)
 			for (int b = 0; b < data.columnas; b++)
-				nueva(a, b) = 1;
+				nueva(a, b, 1);
 	return (*this == nueva);
 }
 
-bool& BoolMatriz::operator()(int x, int y)
+void BoolMatriz::operator()(int x, int y, bool info)
+{
+	data.matriz[x][y] = info;
+}
+
+
+bool BoolMatriz::operator()(int x, int y)
 {
 	return data.matriz[x][y];
 }
-
-void BoolMatriz::operator~()
-{
-	BoolMatriz nuevo(data.columnas, data.filas);
-	for (int a = 0; a < data.filas; a++)
-		for (int b = 0; b < data.columnas; b++)
-			nuevo(b, a) = data.matriz[a][b];
-	*this = nuevo;
-}
-
-void BoolMatriz::operator!() 
-{
-	for (int a = 0; a < data.filas; a++)
-		for (int b = 0; b < data.columnas; b++)
-			data.matriz[a][b] = !data.matriz[a][b];
-}
-
 
 int BoolMatriz::getColumnas()
 {
@@ -208,9 +185,8 @@ int BoolMatriz::getFilas()
 
 void BoolMatriz::resize(int filas, int columnas)
 {
-	dealocarMatriz();
 	data.filas = filas;
 	data.columnas = columnas;
-	alocarMatriz();
+	data.matriz.assign(filas, std::vector<bool>(columnas, 0));
 }
 
