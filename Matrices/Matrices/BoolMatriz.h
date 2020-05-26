@@ -37,4 +37,3 @@ public:
 	int getColumnas();
 	int getFilas();
 };
-
