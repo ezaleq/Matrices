@@ -1,9 +1,8 @@
-#include <iostream>
 #include <stdlib.h>
 #include "BoolMatriz.h"
-#include "input.h"
 
-std::ostream& operator<<(std::ostream& output, BoolMatriz &obj)
+
+std::ostream& operator<<(std::ostream& output, BoolMatriz obj)
 {
 	for (int a = 0; a < obj.getFilas(); a++)
 	{
@@ -26,7 +25,7 @@ void operator>>(std::istream& input, BoolMatriz& obj)
 		{
 			std::cout << '[' << a+1 << "][" << b+1 << "] = ";
 			spc::input(in);
-			obj(a,b) = in;
+			obj(a, b, in);
 		}
 	}
 	std::cout << '\n';
@@ -81,8 +80,7 @@ int main()
 
 			std::cout << A << " v\n" << B << " =\n";
 			BoolMatriz C;
-			C = A;
-			C += B;
+			C = A + B;
 			std::cout << C << '\n';
 			system("pause");
 		}
@@ -101,8 +99,7 @@ int main()
 
 			std::cout << A << " ^\n" << B << " =\n";
 			BoolMatriz C;
-			C = A;
-			C ^= B;
+			C = A ^ B;
 			std::cout << C << '\n';
 			system("pause");
 		}
@@ -124,8 +121,7 @@ int main()
 
 				std::cout << A << " X\n" << B << " =\n";
 				BoolMatriz C;
-				C = A;
-				C *= B;
+				C = A * B;
 				std::cout << C << '\n';
 			}
 			else
@@ -141,8 +137,10 @@ int main()
 			BoolMatriz A(filas, columnas);
 			std::cin >> A;
 			std::cout << A << " = \n";
-			~A;
-			std::cout << A << '\n'; 
+			
+			BoolMatriz C;
+			C = ~A;
+			std::cout << C << '\n'; 
 			system("pause");
 		}
 		else if (response == '5')
@@ -154,8 +152,10 @@ int main()
 			BoolMatriz A(filas, columnas);
 			std::cin >> A;
 			std::cout << A << " = \n";
-			!A;
-			std::cout << A << '\n';
+
+			BoolMatriz C;
+			C = !A;
+			std::cout << C << '\n';
 			system("pause");
 		}
 		else if (response == '7')
@@ -171,7 +171,7 @@ int main()
 			BoolMatriz I(filas, filas);
 			I = 1;
 			std::cout << I << " = \n";
-			I *= A;
+			I = I * A;
 			std::cout << I << '\n';
 			system("pause");
 		}
@@ -191,18 +191,11 @@ int main()
 
 			
 			BoolMatriz At;
-			At = A;
-			~At;
+			At = ~A;
 
 			// A ^ At
 			BoolMatriz AAt;
-			AAt = A;
-			AAt ^= At;
-
-			// A * A 
-			BoolMatriz AA;
-			AA = A;
-			AA *= A;
+			AAt = A ^ At;
 
 			std::cout << A << " = \n";
 			bool one = false, zero = false;
@@ -224,15 +217,16 @@ int main()
 				std::cout << "Simetrica.\n";
 			else if (AAt == 0)
 				std::cout << "A-simetrica.\n";
-			else if (AAt <= I)
+			if (AAt <= I)
 				std::cout << "Anti-simetrico.\n";
 
-			if (AA <= A)
+			if (A * A <= A)
 				std::cout << "Transitiva.\n";
 			system("pause");
 		}
 
 	} while (response != '0');
+	
 	return 0;
 }
 
