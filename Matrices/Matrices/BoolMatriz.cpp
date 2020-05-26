@@ -143,13 +143,18 @@ bool BoolMatriz::operator>(BoolMatriz &matriz2)
 
 bool BoolMatriz::operator==(BoolMatriz& matriz2)
 {
-	for (int a = 0; a < data.filas; a++)
-		for (int b = 0; b < data.columnas; b++)
-		{
-			if (data.matriz[a][b] != matriz2(a, b))
-				return false;
-		}
-	return true;
+	if (data.filas == matriz2.getFilas() && data.columnas == matriz2.getColumnas())
+	{
+		for (int a = 0; a < data.filas; a++)
+			for (int b = 0; b < data.columnas; b++)
+			{
+				if (data.matriz[a][b] != matriz2(a, b))
+					return false;
+			}
+		return true;
+	}
+	else
+		return false;
 }
 
 bool BoolMatriz::operator==(int num)

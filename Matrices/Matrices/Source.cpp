@@ -1,5 +1,7 @@
 #include <stdlib.h>
-#include "BoolMatriz.h"
+#include "DB.h"
+
+
 
 
 std::ostream& operator<<(std::ostream& output, BoolMatriz obj)
@@ -23,13 +25,14 @@ void operator>>(std::istream& input, BoolMatriz& obj)
 	{
 		for (int b = 0; b < obj.getColumnas(); b++)
 		{
-			std::cout << '[' << a+1 << "][" << b+1 << "] = ";
+			std::cout << '[' << a + 1 << "][" << b + 1 << "] = ";
 			spc::input(in);
 			obj(a, b, in);
 		}
 	}
 	std::cout << '\n';
 }
+
 
 void lecturaSize(int& a, int& b)
 {
@@ -45,10 +48,60 @@ void lecturaSize(int& a, int& b)
 	} while (b < 1);
 }
 
+void guardado(DB& db, BoolMatriz& A, BoolMatriz& B, BoolMatriz& C)
+{
+	char resp = '\0';
+	std::cout << "1) Guardar matriz1.\n";
+	std::cout << "2) Guardar matriz2.\n";
+	std::cout << "3) Guardar matriz resultante.\n";
+	std::cout << "0) Volver al menu.\n";
+	do
+	{
+		std::cout << "\t:";
+		spc::input(resp);
+		if (resp == '4') {}
+		else if (resp == '1')
+			db >> A;
+		else if (resp == '2')
+			db >> B;
+		else if (resp == '3')
+			db >> C;
+	}
+	while (resp != '0');
+}
+
+void guardado(DB& db, BoolMatriz& A, BoolMatriz& B)
+{
+	char resp = '\0';
+	std::cout << "1) Guardar matriz1.\n";
+	std::cout << "2) Guardar matriz resultante.\n";
+	std::cout << "0) Volver al menu.\n";
+	do
+	{
+		std::cout << "\t:";
+		spc::input(resp);
+		if (resp == '4') {}
+		else if (resp == '1')
+			db >> A;
+		else if (resp == '2')
+			db >> B;
+	} while (resp != '0');
+}
+
+void lectura(DB& db, BoolMatriz& A, int &filas, int &columnas)
+{
+	if (db.opciones(A))
+	{
+		lecturaSize(filas, columnas);
+		A.resize(filas, columnas);
+		std::cin >> A;
+	}
+}
 
 int main()
 {
 	char response;
+	DB database;
 	int filas = 0, columnas = 0;
 	do
 	{
@@ -59,70 +112,76 @@ int main()
 		std::cout << "3) Producto matricial booleano.\n";
 		std::cout << "4) Transpuesta.\n";
 		std::cout << "5) Complemento.\n";
-		std::cout << "6) Ver variables guardadas.\n";
-		std::cout << "7) Producto matricial con I.\n";
-		std::cout << "8) Clasificacion.\n";
+		std::cout << "6) Producto matricial con I.\n";
+		std::cout << "7) Clasificacion.\n";
+		std::cout << "8) Ver variables guardadas.\n";
 		std::cout << "0) Salir.\n\t:";
 		spc::input(response);
 		if (response == '0') { }
 		else if (response == '1')
 		{
+			BoolMatriz A;
 			system("cls");
 			std::cout << "\t\tSuma logica\n\n";
 			std::cout << "Matriz 1\n";
-			lecturaSize(filas, columnas);
-			BoolMatriz A(filas, columnas);
-			std::cin >> A;
+			lectura(database, A, filas, columnas);
 			
 			BoolMatriz B(filas, columnas);
 			std::cout << "\nMatriz 2\n";
-			std::cin >> B;
-
+			if (database.opciones(B))
+				std::cin >> B;
+			system("cls");
 			std::cout << A << " v\n" << B << " =\n";
 			BoolMatriz C;
 			C = A + B;
 			std::cout << C << '\n';
-			system("pause");
+			guardado(database, A, B, C);
+			
 		}
 		else if (response == '2')
 		{
 			system("cls");
 			std::cout << "\t\tProducto logico\n\n";
 			std::cout << "Matriz 1\n";
-			lecturaSize(filas, columnas);
-			BoolMatriz A(filas, columnas);
-			std::cin >> A;
+			BoolMatriz A;
+			lectura(database, A, filas, columnas);
 
 			BoolMatriz B(filas, columnas);
 			std::cout << "\nMatriz 2\n";
-			std::cin >> B;
+			if (database.opciones(B))
+				std::cin >> B;
 
+			system("cls");
 			std::cout << A << " ^\n" << B << " =\n";
 			BoolMatriz C;
 			C = A ^ B;
 			std::cout << C << '\n';
-			system("pause");
+			guardado(database, A, B, C);
 		}
 		else if (response == '3')
 		{
 			system("cls");
 			std::cout << "\t\tProducto matricial\n\n";
+			BoolMatriz A;
 			std::cout << "Matriz 1\n";
-			lecturaSize(filas, columnas);
-			BoolMatriz A(filas, columnas);
-			std::cin >> A;
+			lectura(database, A, filas, columnas);
 
+			BoolMatriz B;
 			std::cout << "\nMatriz 2\n";
-			lecturaSize(filas, columnas);
+			if(database.opciones(B))
+			{
+				lecturaSize(filas, columnas);
+				A.resize(filas, columnas);
+				std::cin >> A;
+			}
+
 			if (filas == A.getColumnas())
 			{
-				BoolMatriz B(filas, columnas);
-				std::cin >> B;
-
 				std::cout << A << " X\n" << B << " =\n";
 				BoolMatriz C;
 				C = A * B;
 				std::cout << C << '\n';
+				guardado(database, A, B, C);
 			}
 			else
 				std::cout << "ERROR: Las columnas de la matriz 1 deben corresponder a las filas de la matriz 2.\n";
@@ -133,95 +192,126 @@ int main()
 			system("cls");
 			std::cout << "\t\tTraspuesta de la matriz\n\n";
 			std::cout << "Matriz \n";
-			lecturaSize(filas, columnas);
-			BoolMatriz A(filas, columnas);
-			std::cin >> A;
+			BoolMatriz A;
+			lectura(database, A, filas, columnas);
+			system("cls");
 			std::cout << A << " = \n";
 			
 			BoolMatriz C;
 			C = ~A;
 			std::cout << C << '\n'; 
-			system("pause");
+			guardado(database, A, C);
 		}
 		else if (response == '5')
 		{
 			system("cls");
 			std::cout << "\t\tComplemento de la matriz\n\n";
 			std::cout << "Matriz \n";
-			lecturaSize(filas, columnas);
-			BoolMatriz A(filas, columnas);
-			std::cin >> A;
+			BoolMatriz A;
+			lectura(database, A, filas, columnas);
+			system("cls");
 			std::cout << A << " = \n";
 
 			BoolMatriz C;
 			C = !A;
 			std::cout << C << '\n';
-			system("pause");
+			guardado(database, A, C);
 		}
-		else if (response == '7')
+		else if (response == '6')
 		{
 			system("cls");
 			std::cout << "\t\tProducto matricial con I\n\n";
 			std::cout << "Matriz \n";
-			std::cout << "Ingrese las filas/columnas: ";
-			spc::input(filas);
-			BoolMatriz A(filas, filas);
-			std::cin >> A;
-			std::cout << A << " x \n";
-			BoolMatriz I(filas, filas);
-			I = 1;
-			std::cout << I << " = \n";
-			I = I * A;
-			std::cout << I << '\n';
-			system("pause");
+			BoolMatriz A;
+			if (database.opciones(A))
+			{
+				std::cout << "Ingrese las filas/columnas: ";
+				spc::input(filas);
+				A.resize(filas, filas);
+				std::cin >> A;
+			}
+			if (A.getColumnas() == A.getFilas())
+			{
+				system("cls");
+				std::cout << A << " x \n";
+				BoolMatriz I(filas, filas);
+				I = 1;
+				std::cout << I << " = \n";
+				BoolMatriz C;
+				C = I * A;
+				std::cout << I << '\n';
+				guardado(database, A, C, I);
+			}
+			else
+			{
+				system("cls");
+				std::cout << "ERROR: La matriz debe ser cuadrada (filas=columnas).\n";
+				system("pause");
+			}
+			
 		}
-		else if (response == '8')
+		else if (response == '7')
 		{
 			system("cls");
 			std::cout << "\t\tClasificacion de la matriz\n\n";
 			std::cout << "Matriz \n";
-			std::cout << "Ingrese las filas/columnas: ";
-			spc::input(filas);
-			BoolMatriz A(filas, filas);
-			std::cin >> A;
-
-
-			BoolMatriz I(filas, filas);
-			++I;
+			BoolMatriz A;
+			if (database.opciones(A))
+			{
+				std::cout << "Ingrese las filas/columnas: ";
+				spc::input(filas);
+				A.resize(filas, filas);
+				std::cin >> A;
+			}
+			system("cls");
+			if (A.getColumnas() != A.getFilas())
+				std::cout << "ERROR: La matriz debe ser cuadrada (filas=columnas).\n";
+			else
+			{
+				BoolMatriz I(filas, filas);
+				++I;
 
 			
-			BoolMatriz At;
-			At = ~A;
+				BoolMatriz At;
+				At = ~A;
 
-			// A ^ At
-			BoolMatriz AAt;
-			AAt = A ^ At;
+				// A ^ At
+				BoolMatriz AAt;
+				AAt = A ^ At;
 
-			std::cout << A << " = \n";
-			bool one = false, zero = false;
-			for (int i = 0; i < filas; i++)
-			{
-				if (A(i, i) == 1)
-					one = true;
-				else
-					zero = true;
-				if (one && zero)
-					break;
+				std::cout << A << " = \n";
+				bool one = false, zero = false;
+				for (int i = 0; i < filas; i++)
+				{
+					if (A(i, i) == 1)
+						one = true;
+					else
+						zero = true;
+					if (one && zero)
+						break;
+				}
+				if (one && !zero)
+					std::cout << "Reflexiva.\n";
+				else if (!one && zero)
+					std::cout << "A-reflexiva.\n";
+
+				if (A == At)
+					std::cout << "Simetrica.\n";
+				else if (AAt == 0)
+					std::cout << "A-simetrica.\n";
+				if (AAt <= I)
+					std::cout << "Anti-simetrico.\n";
+
+				if (A * A <= A)
+					std::cout << "Transitiva.\n";
 			}
-			if (one && !zero)
-				std::cout << "Reflexiva.\n";
-			else if (!one && zero)
-				std::cout << "A-reflexiva.\n";
+				system("pause");
 
-			if (A == At)
-				std::cout << "Simetrica.\n";
-			else if (AAt == 0)
-				std::cout << "A-simetrica.\n";
-			if (AAt <= I)
-				std::cout << "Anti-simetrico.\n";
-
-			if (A * A <= A)
-				std::cout << "Transitiva.\n";
+		}
+		else if (response == '8')
+		{
+			system("cls");
+			database.print();
 			system("pause");
 		}
 
