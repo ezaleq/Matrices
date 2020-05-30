@@ -114,7 +114,8 @@ int main()
 		std::cout << "5) Complemento.\n";
 		std::cout << "6) Producto matricial con I.\n";
 		std::cout << "7) Clasificacion.\n";
-		std::cout << "8) Ver variables guardadas.\n";
+		std::cout << "8) Guardar una matriz.\n";
+		std::cout << "9) Ver variables guardadas.\n";
 		std::cout << "0) Salir.\n\t:";
 		spc::input(response);
 		if (response == '0') { }
@@ -220,7 +221,7 @@ int main()
 		else if (response == '6')
 		{
 			system("cls");
-			std::cout << "\t\tProducto matricial con I\n\n";
+			std::cout << "\t\tProducto logico con I\n\n";
 			std::cout << "Matriz \n";
 			BoolMatriz A;
 			if (database.opciones(A))
@@ -309,6 +310,19 @@ int main()
 
 		}
 		else if (response == '8')
+		{
+			system("cls");
+			std::cout << "\t\tGuardar matriz\n\n";
+			std::cout << "Matriz \n";
+			lecturaSize(filas, columnas);
+			BoolMatriz A(filas, columnas);
+			std::cin >> A;
+			std::cout << A;
+			std::cout << "\nGuardando...\n";
+			database >> A;
+			system("pause");
+		}
+		else if (response == '9')
 		{
 			system("cls");
 			database.print();
