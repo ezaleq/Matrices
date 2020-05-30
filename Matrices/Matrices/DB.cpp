@@ -130,7 +130,34 @@ bool DB::opciones(BoolMatriz &A)
 		return true;
 }
 
-
+bool DB::editar(int id)
+{
+	node_t* busqueda = buscar(id);
+	if (busqueda)
+	{
+		system("cls");
+		int filas = 0, columnas = 0;
+		bool valor = false;
+		filas = busqueda->Matriz.getFilas();
+		columnas = busqueda->Matriz.getColumnas();
+		std::cout << busqueda->Matriz << '\n';
+		do
+		{
+			std::cout << "Ingrese la fila a modificar: ";
+			spc::input(filas);
+		} while (filas < 1 && filas > busqueda->Matriz.getFilas());
+		do
+		{
+			std::cout << "Ingrese la columna a modificar: ";
+			spc::input(columnas);
+		} while (columnas < 1 && columnas > busqueda->Matriz.getColumnas());
+		std::cout << "Ahora ingrese el valor: ";
+		spc::input(valor);
+		busqueda->Matriz(filas-1, columnas-1, valor);
+		return true;
+	}
+	return false;
+}
 
 DB::~DB()
 {

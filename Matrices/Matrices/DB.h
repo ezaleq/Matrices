@@ -41,6 +41,7 @@ public:
 	void operator>>(BoolMatriz &matriz);
 	bool operator<<(int id);
 	bool opciones(BoolMatriz &A);
+	bool editar(int id);
 	~DB();
 	friend std::ostream& operator<<(std::ostream& output, DB &obj)
 	{

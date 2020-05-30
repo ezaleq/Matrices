@@ -200,4 +200,3 @@ void BoolMatriz::resize(int filas, int columnas)
 	data.columnas = columnas;
 	data.matriz.assign(filas, std::vector<bool>(columnas, 0));
 }
-

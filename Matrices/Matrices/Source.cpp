@@ -255,7 +255,8 @@ int main()
 			{
 				BoolMatriz I(filas, filas);
 				++I;
-
+				BoolMatriz AA;
+				AA = A * A;
 			
 				BoolMatriz At;
 				At = ~A;
@@ -286,8 +287,8 @@ int main()
 					std::cout << "A-simetrica.\n";
 				if (AAt <= I)
 					std::cout << "Anti-simetrico.\n";
-
-				if (A * A <= A)
+				
+				if (AA <= A)
 					std::cout << "Transitiva.\n";
 			}
 				system("pause");
@@ -361,8 +362,9 @@ int main()
 				system("cls");
 				std::cout << "\t\tMenu de matrices guardadas\n\n";
 				std::cout << "1) Guardar matriz.\n";
-				std::cout << "2) Borrar matriz.\n";
-				std::cout << "3) Ver matrices almacenadas.\n";
+				std::cout << "2) Editar matriz.\n";
+				std::cout << "3) Borrar matriz.\n";
+				std::cout << "4) Ver matrices almacenadas.\n";
 				std::cout << "0) Volver al menu principal.\n\t:";
 				spc::input(response);
 
@@ -382,6 +384,23 @@ int main()
 				else if (response == '2')
 				{
 					system("cls");
+					std::cout << "\t\Editar matriz\n\n";
+					std::cout << database << "\n0) Salir.\n\t:";
+					int respuesta = 0;
+					spc::input(respuesta);
+					if (respuesta == 0) {}
+					else
+					{
+						if (database.editar(respuesta))
+							std::cout << "Matriz editada con exito!\n";
+						else
+							std::cout << "No se encontro la matriz seleccionado.\n";
+						system("pause");
+					}
+				}
+				else if (response == '3')
+				{
+					system("cls");
 					std::cout << "\t\tEliminar matriz\n\n";
 					std::cout << database << "\n0) Salir.\n\t:";
 					int respuesta = 0;
@@ -396,7 +415,7 @@ int main()
 						system("pause");
 					}
 				}
-				else if (response == '3')
+				else if (response == '4')
 				{
 					system("cls");
 					std::cout << database << '\n';
