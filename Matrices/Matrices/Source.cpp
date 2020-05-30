@@ -112,7 +112,7 @@ int main()
 		std::cout << "3) Producto matricial booleano.\n";
 		std::cout << "4) Transpuesta.\n";
 		std::cout << "5) Complemento.\n";
-		std::cout << "6) Producto matricial con I.\n";
+		std::cout << "6) Producto logico con I.\n";
 		std::cout << "7) Clasificacion.\n";
 		std::cout << "8) Guardar una matriz.\n";
 		std::cout << "9) Ver variables guardadas.\n";
