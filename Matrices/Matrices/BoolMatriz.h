@@ -36,4 +36,32 @@ public:
 	void resize(int filas, int columnas);
 	int getColumnas();
 	int getFilas();
+
+	friend std::ostream& operator<<(std::ostream& output, BoolMatriz obj)
+	{
+		for (int a = 0; a < obj.getFilas(); a++)
+		{
+			for (int b = 0; b < obj.getColumnas(); b++)
+			{
+				output << obj(a, b) << ' ';
+			}
+			output << '\n';
+		}
+
+		return output;
+	}
+	friend void operator>>(std::istream& input, BoolMatriz& obj)
+	{
+		bool in = false;
+		for (int a = 0; a < obj.getFilas(); a++)
+		{
+			for (int b = 0; b < obj.getColumnas(); b++)
+			{
+				std::cout << '[' << a + 1 << "][" << b + 1 << "] = ";
+				spc::input(in);
+				obj(a, b, in);
+			}
+		}
+		std::cout << '\n';
+	}
 };

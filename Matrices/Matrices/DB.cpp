@@ -7,6 +7,7 @@ void DB::operator>>(BoolMatriz& matriz)
 		node_t* tmp = new node_t;
 		tmp->Matriz = matriz;
 		tmp->id = total;
+		tmp->next = nullptr;
 		if (!head)
 		{
 			head = tmp;
@@ -25,38 +26,55 @@ void DB::operator>>(BoolMatriz& matriz)
 	}
 }
 
-void DB::eliminar(int id)
+bool DB::operator<<(int id)
 {
+	node_t* prev = nullptr;
 	node_t* tmp = head;
 	while (tmp)
 	{
-		if (tmp->next)
+		if (tmp->id == id)
 		{
-			if (tmp->next->id == id)
+			if (total != id + 1)
 			{
-				tmp->next = tmp->next->next;
-				delete tmp->next;
+				if (prev)
+					prev->next = tmp->next;
+				else
+					head = tmp->next;
+				delete tmp;
+				reordenar();
+				return true;
+			}
+			else
+			{
+				delete tmp;
+				if (!prev)
+				{
+					head = nullptr;
+					total = 1;
+				}
+				else
+				{
+					prev->next = nullptr;
+					reordenar();
+				}
+
+				return true;
 			}
 		}
+		prev = tmp;
+		tmp = tmp->next;
 	}
+	return false;
 }
 
-void DB::print()
+void DB::reordenar()
 {
 	node_t* tmp = head;
 	for (int i = 1; tmp; i++)
 	{
-		std::cout << "Matriz " << i << ')' << '\n';
-		for (int a = 0; a < tmp->Matriz.getFilas(); a++)
-		{
-			for (int b = 0; b < tmp->Matriz.getColumnas(); b++)
-			{
-				std::cout << tmp->Matriz(a, b) << ' ';
-			}
-			std::cout << '\n';
-		}
-		std::cout << '\n';
+		tmp->id = i;
 		tmp = tmp->next;
+		total = i + 1;
 	}
 }
 
@@ -112,17 +130,7 @@ bool DB::opciones(BoolMatriz &A)
 		return true;
 }
 
-BoolMatriz DB::obtener(int id)
-{
-	node_t* tmp = head;
-	while (tmp)
-	{
-		if (tmp->id == id)
-			return tmp->Matriz;
-		tmp = tmp->next;
-	}
-	return BoolMatriz();
-}
+
 
 DB::~DB()
 {

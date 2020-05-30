@@ -36,12 +36,30 @@ private:
 		}
 		return nullptr;
 	}
+	void reordenar();
 public:
 	void operator>>(BoolMatriz &matriz);
-	void eliminar(int id);
-	void print();
+	bool operator<<(int id);
 	bool opciones(BoolMatriz &A);
-	BoolMatriz obtener(int id);
 	~DB();
+	friend std::ostream& operator<<(std::ostream& output, DB &obj)
+	{
+		node_t* tmp = obj.head;
+		for (int i = 1; tmp; i++)
+		{
+			output << "Matriz " << i << ')' << '\n';
+			for (int a = 0; a < tmp->Matriz.getFilas(); a++)
+			{
+				for (int b = 0; b < tmp->Matriz.getColumnas(); b++)
+				{
+					output << tmp->Matriz(a, b) << ' ';
+				}
+				output << '\n';
+			}
+			output << '\n';
+			tmp = tmp->next;
+		}
+		return output;
+	}
 };
 

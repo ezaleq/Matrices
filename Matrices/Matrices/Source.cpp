@@ -2,38 +2,6 @@
 #include "DB.h"
 
 
-
-
-std::ostream& operator<<(std::ostream& output, BoolMatriz obj)
-{
-	for (int a = 0; a < obj.getFilas(); a++)
-	{
-		for (int b = 0; b < obj.getColumnas(); b++)
-		{
-			output << obj(a, b) << ' ';
-		}
-		output << '\n';
-	}
-
-	return output;
-}
-
-void operator>>(std::istream& input, BoolMatriz& obj)
-{
-	bool in = false;
-	for (int a = 0; a < obj.getFilas(); a++)
-	{
-		for (int b = 0; b < obj.getColumnas(); b++)
-		{
-			std::cout << '[' << a + 1 << "][" << b + 1 << "] = ";
-			spc::input(in);
-			obj(a, b, in);
-		}
-	}
-	std::cout << '\n';
-}
-
-
 void lecturaSize(int& a, int& b)
 {
 	do
@@ -54,7 +22,7 @@ void guardado(DB& db, BoolMatriz& A, BoolMatriz& B, BoolMatriz& C)
 	std::cout << "1) Guardar matriz1.\n";
 	std::cout << "2) Guardar matriz2.\n";
 	std::cout << "3) Guardar matriz resultante.\n";
-	std::cout << "0) Volver al menu.\n";
+	std::cout << "0) Continuar.\n";
 	do
 	{
 		std::cout << "\t:";
@@ -74,8 +42,8 @@ void guardado(DB& db, BoolMatriz& A, BoolMatriz& B)
 {
 	char resp = '\0';
 	std::cout << "1) Guardar matriz1.\n";
-	std::cout << "2) Guardar matriz resultante.\n";
-	std::cout << "0) Volver al menu.\n";
+	std::cout << "2) Guardar matriz2.\n";
+	std::cout << "0) Continuar.\n";
 	do
 	{
 		std::cout << "\t:";
@@ -114,8 +82,8 @@ int main()
 		std::cout << "5) Complemento.\n";
 		std::cout << "6) Producto logico con I.\n";
 		std::cout << "7) Clasificacion.\n";
-		std::cout << "8) Guardar una matriz.\n";
-		std::cout << "9) Ver variables guardadas.\n";
+		std::cout << "8) Comparar matrices.\n";
+		std::cout << "9) Menu de matrices guardadas.\n";
 		std::cout << "0) Salir.\n\t:";
 		spc::input(response);
 		if (response == '0') { }
@@ -131,13 +99,21 @@ int main()
 			std::cout << "\nMatriz 2\n";
 			if (database.opciones(B))
 				std::cin >> B;
-			system("cls");
-			std::cout << A << " v\n" << B << " =\n";
-			BoolMatriz C;
-			C = A + B;
-			std::cout << C << '\n';
-			guardado(database, A, B, C);
-			
+
+			if (B.getFilas() == filas && B.getColumnas() == columnas)
+			{
+				system("cls");
+				std::cout << A << " v\n" << B << " =\n";
+				BoolMatriz C;
+				C = A + B;
+				std::cout << C << '\n';
+				guardado(database, A, B, C);
+			}
+			else
+			{
+				std::cout << "ERROR: Ambas matrices deben tener las mismas dimensiones.\n";
+				system("pause");
+			}
 		}
 		else if (response == '2')
 		{
@@ -152,12 +128,20 @@ int main()
 			if (database.opciones(B))
 				std::cin >> B;
 
-			system("cls");
-			std::cout << A << " ^\n" << B << " =\n";
-			BoolMatriz C;
-			C = A ^ B;
-			std::cout << C << '\n';
-			guardado(database, A, B, C);
+			if (B.getFilas() == filas && B.getColumnas() == columnas)
+			{
+				system("cls");
+				std::cout << A << " ^\n" << B << " =\n";
+				BoolMatriz C;
+				C = A ^ B;
+				std::cout << C << '\n';
+				guardado(database, A, B, C);
+			}
+			else
+			{
+				std::cout << "ERROR: Ambas matrices deben tener las mismas dimensiones.\n";
+				system("pause");
+			}
 		}
 		else if (response == '3')
 		{
@@ -312,21 +296,116 @@ int main()
 		else if (response == '8')
 		{
 			system("cls");
-			std::cout << "\t\tGuardar matriz\n\n";
-			std::cout << "Matriz \n";
-			lecturaSize(filas, columnas);
-			BoolMatriz A(filas, columnas);
-			std::cin >> A;
-			std::cout << A;
-			std::cout << "\nGuardando...\n";
-			database >> A;
-			system("pause");
+			std::cout << "\t\tComparar matrices\n\n";
+			std::cout << "Matriz A\n";
+			BoolMatriz A;
+			lectura(database, A, filas, columnas);
+
+			BoolMatriz B(filas, columnas);
+			std::cout << "\nMatriz B\n";
+			if (database.opciones(B))
+				std::cin >> B;
+
+			if (B.getFilas() == filas && B.getColumnas() == columnas)
+			{
+				guardado(database, A, B);
+				int resultado = 0;
+				do
+				{
+					system("cls");
+					std::cout << "Matriz A\n" << A;
+					std::cout << "\nMatriz B\n" << B << '\n';
+					std::cout << "\t\tMenu de opciones\n\n";
+					std::cout << "1) A < B\n";
+					std::cout << "2) A > B\n";
+					std::cout << "3) A <= B\n";
+					std::cout << "4) A >= B\n";
+					std::cout << "5) A == B\n";
+					std::cout << "0) Volver.\n";
+					spc::input(resultado);
+					system("cls");
+					auto x = [](bool num){
+						if (num)
+							return (char*)"Verdadero.";
+						else
+							return (char*)"Falso.";
+					};
+					if (resultado == 0) { }
+					else
+					{
+						if (resultado == 1)
+							std::cout << x(A < B) << '\n';
+						else if (resultado == 2)
+							std::cout << x(A > B) << '\n';
+						else if (resultado == 3)
+							std::cout << x(A <= B) << '\n';
+						else if (resultado == 4)
+							std::cout << x(A >= B) << '\n';
+						else if (resultado == 5)
+							std::cout << x(A == B) << '\n';
+						system("pause");
+					}
+
+				} while (resultado != 0);
+			}
+			else
+			{
+				std::cout << "ERROR: Ambas matrices deben tener las mismas dimensiones.\n";
+				system("pause");
+			}
 		}
 		else if (response == '9')
 		{
-			system("cls");
-			database.print();
-			system("pause");
+			do
+			{
+				system("cls");
+				std::cout << "\t\tMenu de matrices guardadas\n\n";
+				std::cout << "1) Guardar matriz.\n";
+				std::cout << "2) Borrar matriz.\n";
+				std::cout << "3) Ver matrices almacenadas.\n";
+				std::cout << "0) Volver al menu principal.\n\t:";
+				spc::input(response);
+
+				if (response == '1')
+				{
+					system("cls");
+					std::cout << "\t\tGuardar matriz\n\n";
+					std::cout << "Matriz\n";
+					lecturaSize(filas, columnas);
+					BoolMatriz A(filas, columnas);
+					std::cin >> A;
+					std::cout << A;
+					std::cout << "\nGuardando...\n";
+					database >> A;
+					system("pause");
+				}
+				else if (response == '2')
+				{
+					system("cls");
+					std::cout << "\t\tEliminar matriz\n\n";
+					std::cout << database << "\n0) Salir.\n\t:";
+					int respuesta = 0;
+					spc::input(respuesta);
+					if (respuesta == 0) { }
+					else
+					{
+						if(database << respuesta)
+							std::cout << "Elemento eliminado con exito!\n";
+						else
+							std::cout << "No se encontro el elemento seleccionado.\n";
+						system("pause");
+					}
+				}
+				else if (response == '3')
+				{
+					system("cls");
+					std::cout << database << '\n';
+					system("pause");
+				}
+
+			} while (response != '0');
+			response = '9';
+			
 		}
 
 	} while (response != '0');
