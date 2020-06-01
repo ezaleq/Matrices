@@ -1,8 +1,10 @@
-﻿  Source.cpp
-C:\Users\faste\Documents\GitHub\Matrices\Matrices\Matrices\Source.cpp(387,19): warning C4129: 'E': unrecognized character escape sequence
+﻿  BoolMatriz.cpp
+  DB.cpp
+  Source.cpp
+C:\Users\faste\Documents\GitHub\Matrices\Matrices\Matrices\Source.cpp(396,19): warning C4129: 'E': unrecognized character escape sequence
   Generating code
-  1 of 267 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+  5 of 235 functions ( 2.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    6 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Matrices.vcxproj -> C:\Users\faste\Documents\GitHub\Matrices\Matrices\Release\Matrices.exe

@@ -1,5 +1,5 @@
+#include <fstream>
 #include "DB.h"
-
 void DB::operator>>(BoolMatriz& matriz)
 {
 	if (!buscar(matriz))
@@ -159,16 +159,64 @@ bool DB::editar(int id)
 	return false;
 }
 
+DB::DB()
+{
+	std::cout << "Cargando base de datos...\n";
+	std::ifstream file("data.bin", std::ios::binary | std::ios::ate);
+	if (file.is_open())
+	{
+		short int filas = 0, columnas = 0;
+		std::streampos size = file.tellg();
+		file.seekg(0, std::ios::beg);
+		BoolMatriz A;
+		bool res = false;
+		while (size > 0)
+		{
+			file.read((char*)&filas, sizeof(short int));
+			file.read((char*)&columnas, sizeof(short int));
+			size -= sizeof(int) * 2;
+			A.resize(filas, columnas);
+			for (int i = 0; i < filas; i++)
+				for (int j = 0; j < columnas; j++)
+				{
+					file.read((char*)&res, sizeof(bool));
+					size -= sizeof(bool);
+					A(i, j, res);
+				}
+			(*this) >> A;
+			std::cout << "Matriz recuperada.\n";
+		}
+		file.close();
+	}
+	system("cls");
+}
+
 DB::~DB()
 {
-	node_t* tmp = nullptr;
-	if (head)
-		tmp = head->next;
+	node_t* tmp = head;
+	std::cout << "Guardando matrices...\n";
+	std::ofstream file("data.bin", std::ios::binary);
 	while (tmp)
 	{
+		int filas = tmp->Matriz.getFilas();
+		int columnas = tmp->Matriz.getColumnas();
+		file.write((char*)&filas, sizeof(short int));
+		file.write((char*)&columnas, sizeof(short int));
+		bool res = false;
+		for (int i = 0; i < filas; i++)
+		{
+			for (int j = 0; j < columnas; j++)
+			{
+				res = tmp->Matriz(i,j);
+				file.write((char*)&res, sizeof(bool));
+			}
+		}
+		tmp = tmp->next;
 		delete head;
 		head = tmp;
-		tmp = tmp->next;
+		std::cout << "Matriz guardada.\n";
 	}
+	file.close();
 	delete head;
+	system("cls");
 }

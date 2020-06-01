@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include "DB.h"
-
-
-void lecturaSize(int& a, int& b)
+void lecturaSize(short int& a, short int& b)
 {
 	do
 	{
@@ -56,7 +54,7 @@ void guardado(DB& db, BoolMatriz& A, BoolMatriz& B)
 	} while (resp != '0');
 }
 
-void lectura(DB& db, BoolMatriz& A, int &filas, int &columnas)
+void lectura(DB& db, BoolMatriz& A, short int &filas, short int &columnas)
 {
 	if (db.opciones(A))
 	{
@@ -64,13 +62,18 @@ void lectura(DB& db, BoolMatriz& A, int &filas, int &columnas)
 		A.resize(filas, columnas);
 		std::cin >> A;
 	}
+	else
+	{
+		filas = A.getFilas();
+		columnas = A.getColumnas();
+	}
 }
 
-int main()
+void test()
 {
-	char response;
+	char response = '\0';
 	DB database;
-	int filas = 0, columnas = 0;
+	short int filas = 0, columnas = 0;
 	do
 	{
 		system("cls");
@@ -95,12 +98,15 @@ int main()
 			std::cout << "Matriz 1\n";
 			lectura(database, A, filas, columnas);
 			
+			system("cls");
+			std::cout << "Matriz 1:\n";
+			std::cout << A << '\n';
 			BoolMatriz B(filas, columnas);
 			std::cout << "\nMatriz 2\n";
 			if (database.opciones(B))
 				std::cin >> B;
 
-			if (B.getFilas() == filas && B.getColumnas() == columnas)
+			if (B.getFilas() == A.getFilas() && B.getColumnas() == A.getColumnas())
 			{
 				system("cls");
 				std::cout << A << " v\n" << B << " =\n";
@@ -124,11 +130,13 @@ int main()
 			lectura(database, A, filas, columnas);
 
 			BoolMatriz B(filas, columnas);
+			system("cls");
+			std::cout << "Matriz 1:\n" << A;
 			std::cout << "\nMatriz 2\n";
 			if (database.opciones(B))
 				std::cin >> B;
 
-			if (B.getFilas() == filas && B.getColumnas() == columnas)
+			if (B.getFilas() == A.getFilas() && B.getColumnas() == A.getColumnas())
 			{
 				system("cls");
 				std::cout << A << " ^\n" << B << " =\n";
@@ -152,16 +160,21 @@ int main()
 			lectura(database, A, filas, columnas);
 
 			BoolMatriz B;
+			system("cls");
+			std::cout << "Matriz 1:\n";
+			std::cout << A << '\n';
 			std::cout << "\nMatriz 2\n";
 			if(database.opciones(B))
 			{
-				lecturaSize(filas, columnas);
-				A.resize(filas, columnas);
-				std::cin >> A;
+				std::cout << "Ingrese el N de columnas: ";
+				spc::input(columnas);
+				B.resize(A.getColumnas(), columnas);
+				std::cin >> B;
 			}
 
-			if (filas == A.getColumnas())
+			if (B.getFilas() == A.getColumnas())
 			{
+				system("cls");
 				std::cout << A << " X\n" << B << " =\n";
 				BoolMatriz C;
 				C = A * B;
@@ -291,8 +304,18 @@ int main()
 				if (AA <= A)
 					std::cout << "Transitiva.\n";
 			}
+			system("pause");
+			std::cout << A << '\n';
+			std::cout << "Desea guardar la matriz? S/N";
+			spc::input(response);
+			if (response == 's' || response == 'S')
+			{
+				std::cout << "Guardando...\n";
+				database >> A;
 				system("pause");
-
+			}
+			response = '\0';
+			
 		}
 		else if (response == '8')
 		{
@@ -375,16 +398,28 @@ int main()
 					std::cout << "Matriz\n";
 					lecturaSize(filas, columnas);
 					BoolMatriz A(filas, columnas);
-					std::cin >> A;
-					std::cout << A;
+					std::cout << "1) Setear todo a 0.\n";
+					std::cout << "2) Setear todo a 1.\n";
+					std::cout << "3) Ingresar valores a mano.\n";
+					spc::input(response);
+					if (response == '1')
+						A = 0;
+					else if (response == '2')
+						A = 1;
+					else
+					{
+						std::cin >> A;
+						std::cout << A;
+					}
 					std::cout << "\nGuardando...\n";
 					database >> A;
+					response = '\0';
 					system("pause");
 				}
 				else if (response == '2')
 				{
 					system("cls");
-					std::cout << "\t\Editar matriz\n\n";
+					std::cout << "\t\tEditar matriz\n\n";
 					std::cout << database << "\n0) Salir.\n\t:";
 					int respuesta = 0;
 					spc::input(respuesta);
@@ -429,6 +464,11 @@ int main()
 
 	} while (response != '0');
 	
-	return 0;
+
+}
+
+int main()
+{
+	test();
 }
 

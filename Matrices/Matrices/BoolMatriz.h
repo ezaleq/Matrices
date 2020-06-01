@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <fstream>
 #include "input.h"
 
 class BoolMatriz
@@ -8,14 +9,14 @@ class BoolMatriz
 private:
 	struct contenido
 	{
-		int filas = 0;
-		int columnas = 0;
+		short int filas = 0;
+		short int columnas = 0;
 		std::vector<std::vector<bool>> matriz;
 	};
 	contenido data;
 
 public:
-	BoolMatriz(int filas, int columnas);
+	BoolMatriz(short int filas, short int columnas);
 	BoolMatriz() { }
 	BoolMatriz operator+(BoolMatriz &matriz2);
 	BoolMatriz operator^(BoolMatriz &matriz2);
@@ -25,18 +26,17 @@ public:
 	BoolMatriz operator++();
 	BoolMatriz operator--();
 	void operator=(int num);
-	bool operator()(int x, int y);
-	void operator()(int x, int y, bool info);
+	bool operator()(short int x, short int y);
+	void operator()(short int x, short int y, bool info);
 	bool operator==(BoolMatriz &matriz2);
 	bool operator==(int num);
 	bool operator>=(BoolMatriz& matriz2);
 	bool operator<=(BoolMatriz& matriz2);
 	bool operator<(BoolMatriz &matriz2);
 	bool operator>(BoolMatriz &matriz2);
-	void resize(int filas, int columnas);
-	int getColumnas();
-	int getFilas();
-
+	void resize(short int filas, short int columnas);
+	short int getColumnas();
+	short int getFilas();
 	friend std::ostream& operator<<(std::ostream& output, BoolMatriz obj)
 	{
 		for (int a = 0; a < obj.getFilas(); a++)

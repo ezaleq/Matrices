@@ -1,7 +1,7 @@
 #include "BoolMatriz.h"
 
 
-BoolMatriz::BoolMatriz(int filas, int columnas)
+BoolMatriz::BoolMatriz(short int filas, short int columnas)
 {
 	data.filas = filas;
 	data.columnas = columnas;
@@ -50,16 +50,28 @@ BoolMatriz BoolMatriz::operator*(BoolMatriz &matriz2)
 		ans.resize(data.filas, matriz2.getColumnas());
 		int n = data.filas;
 		int m = matriz2.getColumnas();
-		for (int k = 0; k < m; k++)
-		{
-			for (int i = 0; i < n; i++)
+		if (m <= data.columnas)
+			for (int k = 0; k < m; k++)
 			{
-				for (int j = 0; j < m; j++)
+				for (int i = 0; i < n; i++)
 				{
-					ans(i, j, ans(i,j) + (data.matriz[i][k] * matriz2(k, j)));
+					for (int j = 0; j < m; j++)
+					{
+						ans(i, j, ans(i,j) + (data.matriz[i][k] * matriz2(k, j)));
+					}
 				}
 			}
-		}
+		else
+			for (int k = 0; k < m-1; k++)
+			{
+				for (int i = 0; i < n; i++)
+				{
+					for (int j = 0; j < m; j++)
+					{
+						ans(i, j, ans(i, j) + (data.matriz[i][k] * matriz2(k, j)));
+					}
+				}
+			}
 	}
 	return ans;
 }
@@ -173,28 +185,28 @@ bool BoolMatriz::operator==(int num)
 	return (*this == nueva);
 }
 
-void BoolMatriz::operator()(int x, int y, bool info)
+void BoolMatriz::operator()(short int x, short int y, bool info)
 {
 	data.matriz[x][y] = info;
 }
 
 
-bool BoolMatriz::operator()(int x, int y)
+bool BoolMatriz::operator()(short int x, short int y)
 {
 	return data.matriz[x][y];
 }
 
-int BoolMatriz::getColumnas()
+short int BoolMatriz::getColumnas()
 {
 	return data.columnas;
 }
 
-int BoolMatriz::getFilas()
+short int BoolMatriz::getFilas()
 {
 	return data.filas;
 }
 
-void BoolMatriz::resize(int filas, int columnas)
+void BoolMatriz::resize(short int filas, short int columnas)
 {
 	data.filas = filas;
 	data.columnas = columnas;

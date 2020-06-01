@@ -1,5 +1,6 @@
 #pragma once
 #include "BoolMatriz.h"
+#include <iostream>
 
 class DB
 {
@@ -38,11 +39,12 @@ private:
 	}
 	void reordenar();
 public:
+	DB();
+	~DB();
 	void operator>>(BoolMatriz &matriz);
 	bool operator<<(int id);
 	bool opciones(BoolMatriz &A);
 	bool editar(int id);
-	~DB();
 	friend std::ostream& operator<<(std::ostream& output, DB &obj)
 	{
 		node_t* tmp = obj.head;
