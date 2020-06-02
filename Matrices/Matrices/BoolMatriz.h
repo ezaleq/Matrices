@@ -13,9 +13,9 @@ private:
 		short int columnas = 0;
 		std::vector<std::vector<bool>> matriz;
 	};
-	contenido data;
 
 public:
+	contenido data;
 	BoolMatriz(short int filas, short int columnas);
 	BoolMatriz() { }
 	BoolMatriz operator+(BoolMatriz &matriz2);

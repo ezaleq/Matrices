@@ -467,8 +467,9 @@ void test()
 
 }
 
+#include <bitset>
 int main()
 {
-	test();
+	//test();
 }
 
