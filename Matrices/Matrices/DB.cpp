@@ -1,4 +1,5 @@
 #include <fstream>
+#include <bitset>
 #include "DB.h"
 void DB::operator>>(BoolMatriz& matriz)
 {
@@ -159,6 +160,10 @@ bool DB::editar(int id)
 	return false;
 }
 
+
+#define algoritmo1 1
+#define algoritmo2 0
+
 DB::DB()
 {
 	std::cout << "Cargando base de datos...\n";
@@ -169,20 +174,41 @@ DB::DB()
 		std::streampos size = file.tellg();
 		file.seekg(0, std::ios::beg);
 		BoolMatriz A;
-		bool res = false;
+		//bool res = false;
+		unsigned char counter = 0;
+		std::bitset<8> chunk;
+		
 		while (size > 0)
 		{
 			file.read((char*)&filas, sizeof(short int));
 			file.read((char*)&columnas, sizeof(short int));
-			size -= sizeof(int) * 2;
+			size -= sizeof(short int) * 2;
 			A.resize(filas, columnas);
 			for (int i = 0; i < filas; i++)
 				for (int j = 0; j < columnas; j++)
 				{
+					#if algoritmo1
+					if (counter == 0)
+						file.read((char*)&chunk, 1);
+					A(i, j, chunk[counter]);
+					counter++;
+					if (counter == 7)
+					{
+						counter = 0;
+						size -= 1;
+					}
+					#endif			
+					#if algoritmo2
 					file.read((char*)&res, sizeof(bool));
 					size -= sizeof(bool);
 					A(i, j, res);
+					#endif				
 				}
+			if (counter != 0)
+			{
+				counter = 0;
+				size -= 1;
+			}
 			(*this) >> A;
 			std::cout << "Matriz recuperada.\n";
 		}
@@ -190,6 +216,7 @@ DB::DB()
 	}
 	system("cls");
 }
+
 
 DB::~DB()
 {
@@ -200,8 +227,26 @@ DB::~DB()
 	{
 		int filas = tmp->Matriz.getFilas();
 		int columnas = tmp->Matriz.getColumnas();
-		file.write((char*)&filas, sizeof(short int));
-		file.write((char*)&columnas, sizeof(short int));
+		file.write((char*)&filas, sizeof(short int)); // 2bytes
+		file.write((char*)&columnas, sizeof(short int)); // 2bytes 
+		std::bitset<8> chunk; // 8bits
+		unsigned char counter = 0; // 0-254
+		#if 1 
+		for (int i = 0; i < filas; i++)
+		{
+			for (int j = 0; j < columnas; j++)
+			{
+				chunk[counter] = tmp->Matriz(i, j);
+				counter++;
+				if (counter==7)
+				{
+					file.write((char*)&chunk, 1);
+					counter = 0;
+				}
+			}
+		}
+		#endif
+		#if algoritmo2
 		bool res = false;
 		for (int i = 0; i < filas; i++)
 		{
@@ -210,6 +255,12 @@ DB::~DB()
 				res = tmp->Matriz(i,j);
 				file.write((char*)&res, sizeof(bool));
 			}
+		}
+		#endif
+		if (counter != 0)
+		{
+			file.write((char*)&chunk, 1);
+			counter = 0;
 		}
 		tmp = tmp->next;
 		delete head;
