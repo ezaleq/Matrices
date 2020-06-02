@@ -50,28 +50,17 @@ BoolMatriz BoolMatriz::operator*(BoolMatriz &matriz2)
 		ans.resize(data.filas, matriz2.getColumnas());
 		int n = data.filas;
 		int m = matriz2.getColumnas();
-		if (m <= data.columnas)
-			for (int k = 0; k < m; k++)
+		int o = data.columnas;
+		for (int k = 0; k < o; k++)
+		{
+			for (int i = 0; i < n; i++)
 			{
-				for (int i = 0; i < n; i++)
+				for (int j = 0; j < m; j++)
 				{
-					for (int j = 0; j < m; j++)
-					{
-						ans(i, j, ans(i,j) + (data.matriz[i][k] * matriz2(k, j)));
-					}
+					ans(i, j, ans(i,j) + (data.matriz[i][k] * matriz2(k, j)));
 				}
 			}
-		else
-			for (int k = 0; k < m-1; k++)
-			{
-				for (int i = 0; i < n; i++)
-				{
-					for (int j = 0; j < m; j++)
-					{
-						ans(i, j, ans(i, j) + (data.matriz[i][k] * matriz2(k, j)));
-					}
-				}
-			}
+		}
 	}
 	return ans;
 }
